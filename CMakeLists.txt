@@ -1,9 +1,9 @@
 if(APPLE)
 
 cmake_minimum_required(VERSION 3.16)
-find_package(Albert REQUIRED)
+project(contacts VERSION 6.1)
 
-project(contacts VERSION 6.0)
+find_package(Albert REQUIRED)
 
 find_library(CONTACTS_FRAMEWORK Contacts)
 
