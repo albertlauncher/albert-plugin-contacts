@@ -1,14 +1,12 @@
 if(APPLE)
 
 cmake_minimum_required(VERSION 3.16)
-project(contacts VERSION 6.1)
+project(contacts VERSION 6.2)
 
 find_package(Albert REQUIRED)
 
-find_library(CONTACTS_FRAMEWORK Contacts)
-
 albert_plugin(
-    LINK PRIVATE ${CONTACTS_FRAMEWORK}
+    LINK PRIVATE "-framework Contacts"
     QT Widgets Concurrent
 )
 
