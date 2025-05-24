@@ -68,7 +68,7 @@ QString ContactItem::subtext() const
 
 QStringList ContactItem::iconUrls() const
 {
-    return {QStringLiteral("qfip:/System/Applications/Contacts.app")};
+    return {u"qfip:/System/Applications/Contacts.app"_s};
 }
 
 QString ContactItem::inputActionText() const { return name_; }
