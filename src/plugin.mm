@@ -7,9 +7,10 @@
 #include <albert/item.h>
 #include <albert/logging.h>
 ALBERT_LOGGING_CATEGORY("contacts")
+using namespace Qt::StringLiterals;
+using namespace albert::util;
 using namespace albert;
 using namespace std;
-using namespace util;
 #if  ! __has_feature(objc_arc)
 #error This file must be compiled with ARC.
 #endif
@@ -76,10 +77,10 @@ vector<Action> ContactItem::actions() const
 {
     vector<Action> actions;
 
-    actions.emplace_back("cn-open", Plugin::tr("Open in contacts app"), [this] {
+    actions.emplace_back(u"cn-open"_s, Plugin::tr("Open in contacts app"), [this] {
         // QUrl refuses to parse addressboolk urls. Use platform open.
         // https://bugreports.qt.io/browse/QTBUG-129496
-        albert::runDetachedProcess({"open", "addressbook://" + id_});
+        albert::runDetachedProcess({u"open"_s, u"addressbook://"_s % id_});
     });
 
     NSError *error = nil;
@@ -106,12 +107,12 @@ vector<Action> ContactItem::actions() const
         else
             label = QString::fromNSString(number.label);
 
-        actions.emplace_back("pn-copy", Plugin::tr("Copy phone number '%1'").arg(label),
+        actions.emplace_back(u"pn-copy"_s, Plugin::tr("Copy phone number '%1'").arg(label),
                              [=]{ setClipboardText(val); });
-        actions.emplace_back("pn-call", Plugin::tr("Call phone number '%1'").arg(label),
-                             [=]{ openUrl("tel:" + val); });
-        actions.emplace_back("pn-iMess", Plugin::tr("iMessage to '%1'").arg(label),
-                             [=]{ openUrl("sms:" + val); });
+        actions.emplace_back(u"pn-call"_s, Plugin::tr("Call phone number '%1'").arg(label),
+                             [=]{ openUrl(u"tel:"_s % val); });
+        actions.emplace_back(u"pn-iMess"_s, Plugin::tr("iMessage to '%1'").arg(label),
+                             [=]{ openUrl(u"sms:"_s % val); });
     }
 
     // Email addresses
@@ -126,10 +127,10 @@ vector<Action> ContactItem::actions() const
         else
             label = QString::fromNSString(mail.label);
 
-        actions.emplace_back("ea-copy", Plugin::tr("Copy email address '%1'").arg(label),
+        actions.emplace_back(u"ea-copy"_s, Plugin::tr("Copy email address '%1'").arg(label),
                              [=]{ setClipboardText(val); });
-        actions.emplace_back("ea-mail", Plugin::tr("Send mail to '%1'").arg(label),
-                             [=]{ openUrl("mailto:" + val); });
+        actions.emplace_back(u"ea-mail"_s, Plugin::tr("Send mail to '%1'").arg(label),
+                             [=]{ openUrl(u"mailto:"_s % val); });
     }
 
     // Url addresses
@@ -145,9 +146,9 @@ vector<Action> ContactItem::actions() const
             label = QString::fromNSString(url.label);
 
 
-        actions.emplace_back("ua-copy", Plugin::tr("Copy website address '%1'").arg(label),
+        actions.emplace_back(u"ua-copy"_s, Plugin::tr("Copy website address '%1'").arg(label),
                              [=]{ setClipboardText(val); });
-        actions.emplace_back("ua-open", Plugin::tr("Open website '%1'").arg(label),
+        actions.emplace_back(u"ua-open"_s, Plugin::tr("Open website '%1'").arg(label),
                              [=]{ openUrl(val); });
     }
 
@@ -229,7 +230,7 @@ Plugin::Plugin() : d(make_unique<Private>())
                     QString::fromNSString(contact.middleName),
                     QString::fromNSString(contact.familyName),
                     QString::fromNSString(contact.nameSuffix),
-                }).join(" ").simplified();
+                }).join(QChar::Space).simplified();
 
                 if (name.isEmpty())
                     DEBG << "Empty name. Skipping contact" << QString::fromNSString(contact.identifier);
@@ -258,7 +259,7 @@ Plugin::Plugin() : d(make_unique<Private>())
 
     d->indexer.finish = [this](vector<IndexItem> &&r)
     {
-        INFO << QString("Indexed %1 contact items (%2 ms).")
+        INFO << u"Indexed %1 contact items (%2 ms)."_s
                     .arg(r.size()).arg(d->indexer.runtime.count());
 
         setIndexItems(::move(r));
