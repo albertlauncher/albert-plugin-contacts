@@ -1,11 +1,12 @@
 // Copyright (c) 2023-2024 Manuel Schneider
 
 #include "plugin.h"
+#include <QUrl>
 #include <Contacts/Contacts.h>
-#include <albert/albert.h>
 #include <albert/backgroundexecutor.h>
 #include <albert/item.h>
 #include <albert/logging.h>
+#include <albert/systemutil.h>
 ALBERT_LOGGING_CATEGORY("contacts")
 using namespace Qt::StringLiterals;
 using namespace albert::util;
@@ -78,9 +79,7 @@ vector<Action> ContactItem::actions() const
     vector<Action> actions;
 
     actions.emplace_back(u"cn-open"_s, Plugin::tr("Open in contacts app"), [this] {
-        // QUrl refuses to parse addressboolk urls. Use platform open.
-        // https://bugreports.qt.io/browse/QTBUG-129496
-        albert::runDetachedProcess({u"open"_s, u"addressbook://"_s % id_});
+        openUrl(u"addressbook:///"_s + QString::fromUtf8(QUrl::toPercentEncoding(id_)));
     });
 
     NSError *error = nil;
