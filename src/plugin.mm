@@ -80,12 +80,16 @@ vector<Action> ContactItem::actions() const
 
     actions.emplace_back(u"cn-open"_s, Plugin::tr("Open in contacts app"), [this] {
         // openUrl(u"addressbook:///"_s + QString::fromUtf8(QUrl::toPercentEncoding(id_)));
-        runAppleScript(uR"(
-            tell application "Contacts"
-                activate
-                set selection to person id "%1"
-            end tell
-        )"_s.arg(id_));
+        try {
+            runAppleScript(uR"(
+                tell application "Contacts"
+                    activate
+                    set selection to person id "%1"
+                end tell
+            )"_s.arg(id_));
+        } catch (const std::runtime_error &e) {
+            WARN << e.what();
+        }
     });
 
     NSError *error = nil;
