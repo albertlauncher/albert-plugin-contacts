@@ -1,1 +1,1 @@
-# albert-plugin-contacts
+# Albert plugin: Contacts
