@@ -1,7 +1,6 @@
 // Copyright (c) 2023-2024 Manuel Schneider
 
 #include "plugin.h"
-#include <QUrl>
 #include <Contacts/Contacts.h>
 #include <albert/backgroundexecutor.h>
 #include <albert/item.h>
@@ -79,7 +78,6 @@ vector<Action> ContactItem::actions() const
     vector<Action> actions;
 
     actions.emplace_back(u"cn-open"_s, Plugin::tr("Open in contacts app"), [this] {
-        // openUrl(u"addressbook:///"_s + QString::fromUtf8(QUrl::toPercentEncoding(id_)));
         try {
             runAppleScript(uR"(
                 tell application "Contacts"
