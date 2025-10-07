@@ -3,6 +3,7 @@
 #include "plugin.h"
 #include <Contacts/Contacts.h>
 #include <albert/backgroundexecutor.h>
+#include <albert/iconutil.h>
 #include <albert/item.h>
 #include <albert/logging.h>
 #include <albert/systemutil.h>
@@ -36,7 +37,7 @@ public:
     QString id() const override;
     QString text() const override;
     QString subtext() const override;
-    QStringList iconUrls() const override;
+    std::unique_ptr<Icon> icon() const override;
     QString inputActionText() const override;
     vector<Action> actions() const override;
 
@@ -66,10 +67,7 @@ QString ContactItem::subtext() const
     }
 }
 
-QStringList ContactItem::iconUrls() const
-{
-    return {u"qfip:/System/Applications/Contacts.app"_s};
-}
+unique_ptr<Icon> ContactItem::icon() const { return makeFileTypeIcon(u"/System/Applications/Contacts.app"_s); }
 
 QString ContactItem::inputActionText() const { return name_; }
 
