@@ -4,8 +4,8 @@
 #include <albert/indexqueryhandler.h>
 #include <albert/extensionplugin.h>
 
-class Plugin : public albert::util::ExtensionPlugin,
-               public albert::util::IndexQueryHandler
+class Plugin : public albert::ExtensionPlugin,
+               public albert::IndexQueryHandler
 {
     ALBERT_PLUGIN
 
