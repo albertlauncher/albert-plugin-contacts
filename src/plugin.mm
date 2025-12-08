@@ -20,7 +20,7 @@ class Plugin::Private
 {
 public:
     CNContactStore *store = [[CNContactStore alloc] init];
-    BackgroundExecutor<shared_ptr<vector<IndexItem>>> indexer;
+    BackgroundExecutor<vector<IndexItem>> indexer;
     NSObject *observer;
     QString tr_person = Plugin::tr("Person");
     QString tr_organization = Plugin::tr("Organization");
@@ -206,11 +206,11 @@ Plugin::Plugin() : d(make_unique<Private>())
     d->store = [[CNContactStore alloc] init];
     ContactItem::store_ = d->store;
 
-    d->indexer.parallel = [this](const bool &) -> shared_ptr<vector<IndexItem>>
+    d->indexer.parallel = [this](const bool &)
     {
         INFO << "Indexing contacts";
 
-        __block shared_ptr<vector<IndexItem>> index_items = make_shared<vector<IndexItem>>();
+        __block vector<IndexItem> index_items;
 
         auto *keys = @[
             // CNContactIdentifierKey, always fetched
@@ -245,7 +245,7 @@ Plugin::Plugin() : d(make_unique<Private>())
                         name,
                         contact.contactType);
 
-                    index_items->emplace_back(::move(item), name);
+                    index_items.emplace_back(::move(item), name);
                 }
             }
         };
@@ -261,12 +261,11 @@ Plugin::Plugin() : d(make_unique<Private>())
         return index_items;
     };
 
-    d->indexer.finish = [this](shared_ptr<vector<IndexItem>> r)
+    d->indexer.finish = [this]
     {
-        INFO << u"Indexed %1 contact items (%2 ms)."_s
-                    .arg(r->size()).arg(d->indexer.runtime.count());
-
-        setIndexItems(::move(*r));
+        auto index_items = d->indexer.takeResult();
+        INFO << u"Indexed %1 contact items."_s.arg(index_items.size());
+        setIndexItems(::move(index_items));
     };
 
     // Register for contact changes
