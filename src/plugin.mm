@@ -3,7 +3,7 @@
 #include "plugin.h"
 #include <Contacts/Contacts.h>
 #include <albert/backgroundexecutor.h>
-#include <albert/iconutil.h>
+#include <albert/icon.h>
 #include <albert/item.h>
 #include <albert/logging.h>
 #include <albert/systemutil.h>
@@ -66,7 +66,7 @@ QString ContactItem::subtext() const
     }
 }
 
-unique_ptr<Icon> ContactItem::icon() const { return makeFileTypeIcon(u"/System/Applications/Contacts.app"_s); }
+unique_ptr<Icon> ContactItem::icon() const { return Icon::fileType(u"/System/Applications/Contacts.app"_s); }
 
 QString ContactItem::inputActionText() const { return name_; }
 
